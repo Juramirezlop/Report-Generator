@@ -1,0 +1,5 @@
+[['Daniel Ballén Baena', 5.0, 4.7, 'Juan David Lancheros'], ['Juan Andrés De Las Casas', 5.0, 5.0], []]
+Estudiante
+Nota
+2
+2
