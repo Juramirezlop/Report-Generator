@@ -2,3 +2,5 @@ Lista de librerias usadas para la creación del programa:
 
 -matplotlib == 3.3.2
 -msvcrt == standard
+-urllib.request == 3.6
+-BeautifulSoup4 == 3.4
