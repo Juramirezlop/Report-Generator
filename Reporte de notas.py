@@ -2,15 +2,17 @@ import msvcrt as m
 
 import matplotlib.pyplot as plt
 
+diccionario = {}
+
 """
 Generador de reportes de notas
 En la mayor parte del programa los parámetros entre funciones se repiten, y ello es porque las funciones se llaman constantemente entre sí y de la misma manera, el intercambio de datos debe ser constante.
 """
 
-
-def calificaciones(numero_estudiantes, numero_notas, encabezado2, encabezado1):
+def calificaciones(numero_estudiantes, numero_notas, encabezado2, encabezado1, diccionario):
 	"""
 	Función encargada de generar la matriz principal que se usará durante la ejecución de todo el código.
+	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
 	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
 	:param list matriz_cal: Matriz de Notas
 	:param string nota: Valor de nota individual
@@ -29,28 +31,19 @@ def calificaciones(numero_estudiantes, numero_notas, encabezado2, encabezado1):
 		for b in range(numero_notas+1):
 			if b == 0:
 				nombre = input("{} {}: ".format(encabezado1, a+1))
-				while len(nombre) == 0:
+				while nombre.istitle() == False:
 					nombre = input("Ingrese un(a) {} {} Válido: ".format(encabezado1, a+1))
-				while 48 <= ord(nombre[0]) and 57 >= ord(nombre[0]):
-					nombre = input("Ingrese un(a) {} {} Válido: ".format(encabezado1, a+1))
-					while len(nombre) == 0:
-						nombre = input("Ingrese un(a) {} {} Válido: ".format(encabezado1, a+1))
 				matriz_cal[a].append(nombre)
 			else:
-				nota = input("{}, {} {}: ".format(nombre, encabezado2, b))
-				while len(nota) == 0:
-					nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, encabezado2, b))
-					if len(nota) == 0:
-						continue
-					else:
-						while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-							nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, encabezado2, b))
-							if len(nota) == 0:
-								break
-				while 48 > ord(nota[0]) or 57 < ord(nota[0]):
-					nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, encabezado2, b))
-					while len(nota) == 0:
-						nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, encabezado2, b))
+				while True:
+					nota = input("{}, {} {}: ".format(nombre, encabezado2, b))
+					try:
+						nota = float(nota)
+						break
+					except ValueError:
+						print()
+						print("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, encabezado2, b))
+						print()
 					
 				nota = round(float(nota), 2)
 					
@@ -60,10 +53,10 @@ def calificaciones(numero_estudiantes, numero_notas, encabezado2, encabezado1):
 	print("Presione Cualquier Tecla Para Continuar...")
 	wait()
 
-	menu_de_seleccion(matriz_cal, encabezado1, encabezado2, numero_estudiantes, numero_notas)
+	menu_de_seleccion(matriz_cal, encabezado1, encabezado2, numero_estudiantes, numero_notas, diccionario)
 
 
-def notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	
 	"""
 	Función encargade de imprimir la tabla de notas actual con los datos presentes.
@@ -73,7 +66,7 @@ def notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	:param function wait(): espera interacción del usuario para continuar antes de volver al menu principal denomidado menu_de_seleccion
 	:param function encabezado(): sólo imprime el encabezado de la tabla en pantalla con los criterios dados al inicio del programa
 	"""
-	encabezado(parte1, parte2)
+	encabezado(parte1, parte2, diccionario)
 	
 	contador = 0
 
@@ -88,10 +81,10 @@ def notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	print("Presione Cualquier Tecla para Continuar")
 	wait()
 	wait()
-	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
-def modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	"""
 	Función dispuesta para la mdodificación de datos respecto a los ya ingresados. Funciona con sentencias print() para guiar al usuario a un punto específico del programa.
 	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
@@ -102,30 +95,19 @@ def modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	:param string o int seleccion1: permite la selección del tipo de modicfiación que se desea usar sin alterar otras variables. Es un seleccionador secundario.
 	:param function wait(): espera interacción del usuario para continuar con la ejecución del código.
 	:param function modulo_de_cambio: función definida para realizar cambios a los datos actuales.
-	:param function menu_de_seleccion: menu anterior para navegar en opciones distintas a la de modificación.
+	:param function menu_de_seleccion: menu anterior para navegar en opciones distintas a la de modificación.6
 	:param function notas_copia: permite visualizar los datos actuales sin necesidad de entrar a menús distintos.
 	"""
 	print()
-	print("Este módulo es para modificar la información por estudiante")
+	print("Este módulo es para modificar la información por estudiante.")
 	print()
 	print("Presione Cualquier Tecla para Continuar")
 	print()
 	wait()
-	seleccion = input(("Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ")).upper()
+	seleccion = input(("Ingrese M para modificar, N para volver, si desea ver los datos de la tabla, entonces T: ")).upper()
 	
-	while len(seleccion) == 0:
-		seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-		if len(seleccion) == 0:
-			continue
-		else:
-			while seleccion != "N" and seleccion != "T" and (48 > ord(seleccion[0]) or 57 < ord(seleccion[0])):
-				seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-				if len(seleccion) == 0:
-					break
-	while seleccion != "N" and seleccion != "T" and (48 > ord(seleccion[0]) or 57 < ord(seleccion[0])):
-		seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-		while len(seleccion) == 0:
-			seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
+	while seleccion != "N" and seleccion != "T" and seleccion != "M":
+		seleccion = input('Ingrese M para modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
 
 	print("{}, ¿es esto correcto?".format(seleccion))
 	
@@ -135,21 +117,10 @@ def modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 			yes = input("(S/N): ").upper()
 	
 	while yes == "N":
-		seleccion = input(("Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ")).upper()
+		seleccion = input(("Ingrese M para modificar, N para volver, si desea ver los datos de la tabla, entonces T: ")).upper()
 	
-		while len(seleccion) == 0:
-			seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-			if len(seleccion) == 0:
-				continue
-			else:
-				while seleccion != "N" and seleccion != "T" and (48 > ord(seleccion[0]) or 57 < ord(seleccion[0])):
-					seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-					if len(seleccion) == 0:
-						break
-		while seleccion != "N" and seleccion != "T" and (48 > ord(seleccion[0]) or 57 < ord(seleccion[0])):
-			seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
-			while len(seleccion) == 0:
-				seleccion = input('Ingrese número de estudiante a modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
+		while seleccion != "N" and seleccion != "T" and seleccion != "M":
+			seleccion = input('Ingrese M para modificar, N para volver, si desea ver los datos de la tabla, entonces T: ').upper()
 
 		print("{}, ¿es esto correcto?".format(seleccion))
 		yes = input("(S/N): ").upper()
@@ -157,159 +128,159 @@ def modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 			continue
 	
 	if seleccion == "N":
-		
-		menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+		menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 	elif seleccion == "T":
-		notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
-	else: 
+		notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+	elif seleccion == "M": 
 
-		while int(seleccion) > len(matriz_cal) and seleccion != "0":
-			seleccion = input("Seleccione Número de Estudiante Existente: ")
-			while len(seleccion) == 0:
-				seleccion = input("Seleccione Número de Estudiante Existente: ")
-			while ord(seleccion[0]) < 48 and ord(seleccion[0]) > 57:
-				seleccion = input("Seleccione Número de Estudiante Existente: ")
-				while len(seleccion) == 0:
-					seleccion = input("Seleccione Número de Estudiante Existente: ")
+		print("                                OPCIONES DE CAMBIO")
+		print()
+		print("                               ====================")
+		print()
+		print("                0. Agregar Estudiantes y Notas o Cambiar Datos")
+		print()
+		print("                1. Agregar o Borrar Notas a Estudiante")
+		print()
+		print("                2. Consultar Notas por Estudiante")
+		print()
+		print("                3. Salir")
+		print()
 
-		seleccion = int(seleccion)-1
+		seleccion2 = input("Por favor seleccione una opción: ")
 
-		
-		print("El número {}, pertenece al estudiante {},". format(seleccion+1, matriz_cal[seleccion][0]), "¿está seguro que desea continuar?")
-		yes = input("(S/N): ").upper()
-
+		while seleccion2 != '0' and seleccion2 != '1' and seleccion2 != '2' and seleccion2 != '3':
+			seleccion2 = input("Por favor seleccione una opción: ")
+				
+		yes = input(f"{seleccion2}, ¿Es esto Correcto?, (S/N): ").upper()
 	
 		while yes != "N" and yes != "S":
 			yes = input("(S/N): ").upper()
 
-		if yes == "N":
-			while yes == "N": 
-				modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
-		else: 
-			print("                                OPCIONES DE CAMBIO")
-			print()
-			print("                               ====================")
-			print()
-			print("                0. Agregar Estudiantes y Notas o Cambiar Datos")
-			print()
-			print("                1. Agregar o Borrar Notas a Estudiante")
-			print()
-			print("                2. Consultar Notas por Estudiante")
-			print()
-			print("                3. Salir")
-			print()
-
-			seleccion2 = input("Por favor seleccione una opción: ")
-
-			while len(str(seleccion2)) == 0:
+		while yes == "N":
 				seleccion2 = input("Por favor seleccione una opción: ")
-				
-
-			while seleccion2 != '0' and seleccion2 != '1' and seleccion2 != '2' and seleccion2 != '3':
-				seleccion2 = input("Por favor seleccione una opción: ")
-				while len(seleccion2) == 0:
-					break
+				while seleccion2 != '0' and seleccion2 != '1' and seleccion2 != '2' and seleccion2 != '3':
+					seleccion2 = input("Por favor seleccione una opción: ")
 				yes = input(f"{seleccion2}, ¿Es esto Correcto?, (S/N): ").upper()
-	
 				while yes != "N" and yes != "S":
 					yes = input("(S/N): ").upper()
 
-				while yes == "N":
-					if yes == "N": 
-						seleccion2 = input("Por favor seleccione una opción: ")
-						yes = input(f"{seleccion2}, ¿Es esto Correcto?, (S/N): ").upper()
-						while yes != "N" and yes != "S":
-							yes = input("(S/N): ").upper()
-					else:
-						break
+		seleccion2 = int(seleccion2)
 
-			seleccion2 = int(seleccion2)
+		if seleccion2 == 0:
 
-			if seleccion2 == 0:
+			modulo_cambio(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas, diccionario)
 
-				modulo_cambio(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas)
+		if seleccion2 == 1:
 
-			if seleccion2 == 1:
+			seleccion = input("Ingrese el Códgio de Estudiante a Revisar: ")
+			while seleccion.isalnum() == False:
+				seleccion = input("Ingrese el Códgio de Estudiante a Revisar Válido: ")
 
-				seleccion1 = input("Por Favor Seleccione una Opción para Continuar, S para agregar notas o B para borrar: ").upper()
-				print(seleccion1)
+			while int(seleccion) > len(matriz_cal) or int(seleccion) == 0:
+				seleccion = input("Ingrese el Códgio de Estudiante a Revisar Existente: ")
+				while seleccion.isalnum() == False:
+					seleccion = input("Ingrese el Códgio de Estudiante a Válido: ")
 
-				while len(seleccion1) == 0:
+			seleccion = int(seleccion)-1
+		
+			print("El número {}, pertenece al estudiante {},". format(seleccion+1, matriz_cal[seleccion][0]), "¿está seguro que desea continuar?")
+			yes = input("(S/N): ").upper()
+			while yes != "N" and yes != "S":
+				yes = input("(S/N): ").upper()
+
+			while yes == "N":
+				seleccion = input("Ingrese el Códgio de Estudiante a Revisar: ")
+				while seleccion.isalnum() == False:
+					seleccion = input("Ingrese el Códgio de Estudiante a Revisar Válido: ")
+
+				while int(seleccion) > len(matriz_cal) or int(seleccion) == 0:
+					seleccion = input("Ingrese el Códgio de Estudiante a Revisar Existente: ")
+					while seleccion.isalnum() == False:
+						seleccion = input("Ingrese el Códgio de Estudiante a Revisar Válido: ")
+
+				seleccion = int(seleccion)-1
+		
+				print("El número {}, pertenece al estudiante {},". format(seleccion+1, matriz_cal[seleccion][0]), "¿está seguro que desea continuar?")
+				yes = input("(S/N): ").upper()
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+
+			seleccion1 = input("Por Favor Seleccione una Opción para Continuar, S para agregar notas o B para borrar: ").upper()
+
+			while seleccion1 != "S" and seleccion1 != "B":
 					seleccion1 = input("Por Favor Seleccione una Opción para Continuar, S para agregar notas o B para borrar: ").upper()
-				while seleccion1 != "S" and seleccion1 != "B":
-						seleccion1 = input("Por Favor Seleccione una Opción para Continuar, S para agregar notas o B para borrar: ").upper()
-						while len(seleccion1) == 0:
-							seleccion1 = input("Por Favor Seleccione una Opción para Continuar, S para agregar notas o B para borrar: ").upper()
 
-				if seleccion1 == "S": 
-
+			if seleccion1 == "S": 
+					
+				while True:
 					seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Adicionar: ")
-				
-					while len(seleccion2) == 0:
-						seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Adicionar: ")
-					while 48 > ord(seleccion2[0]) or 57 < ord(seleccion2[0]):
-							seleccion2 = input("Por Favor Ingrese Número Adicional de Notas")
-							while len(nota) == 0:
-								seleccion2 = input("Por Favor Ingrese Número Adicional de Notas")
+					try:
+						seleccion2 = int(seleccion2)
+						break
+					except ValueError:
+						print()
+						print("Ingrese un Valor Válido")
+						print()
 
-					seleccion2 = int(seleccion2)
-					seleccion = int(seleccion)
+				seleccion2 = int(seleccion2)
 
-					for b in range(1,seleccion2+1):
+				for b in range(seleccion2):
+					while True:
 						nota = input("{}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b))
-						while len(nota) == 0:
-							nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal[seleccion])+b))
-							if len(nota) == 0:
-								continue
-							else:
-								while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-									nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal[seleccion])+b))
-									if len(nota) == 0:
-										break
-						while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-							nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal[seleccion])+b))
-							while len(nota) == 0:
-								nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal[seleccion])+b))
-							
+						try:
+							nota = float(nota)
+							break
+						except ValueError:
+							print()
+							print("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal[seleccion])+b))
+							print()
 					
-						nota = round(float(nota), 2)
+					nota = round(float(nota), 2)
 					
-						matriz_cal[seleccion].append(nota)
+					matriz_cal[seleccion].append(nota)
 
-					print("Tarea realizada con éxtio, presione cualquier tecla para continuar: ")
-					wait()
-					modificar(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas)
+				print("Tarea realizada con éxtio, presione cualquier tecla para continuar: ")
+				wait()
+				modificar(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas, diccionario)
 
-				if seleccion1 == "B": 
-						
+			if seleccion1 == "B": 
+				while True:
 					seleccion2 = input("Por Favor Ingrese Código de Nota a Borrar: ")
-				
-					while len(seleccion2) == 0:
-						seleccion2 = input("Por Favor Ingrese Código de Nota a Borrar: ")
-					while 48 > ord(seleccion2[0]) or 57 < ord(seleccion2[0]):
-							seleccion2 = input("Por Favor Ingrese Código de Nota a Borrar: ")
-							while len(seleccion2) == 0:
-								seleccion2 = input("Por Favor Ingrese Código de Nota a Borrar: ")
+					try:
+						seleccion2 = int(seleccion2)
+						break
+					except ValueError:
+						print()
+						print("Ingrese un Valor Válido")
+						print()
 
-					seleccion2 = int(seleccion2)
-					seleccion = int(seleccion)
-					
+				seleccion2 = int(seleccion2)
+
+				print("Numero de nota seleccionada pertenece a {} de {}".format(matriz_cal[seleccion][0], matriz_cal[seleccion][seleccion2]),
+		  "¿Desea continuar?")
+
+				yes = input("(S/N): ").upper()
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+				if yes == "N":
+					modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+
+				else:
 					del(matriz_cal[seleccion][seleccion2])
-
 					print("Tarea realizada con éxtio, presione cualquier tecla para continuar: ")
 					wait()
-					modificar(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas)
+					modificar(matriz_cal, parte1, parte2,  numero_estudiantes, numero_notas, diccionario)
 			
-			if seleccion2 == 2:
+		if seleccion2 == 2:
 
-				notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
-			if seleccion2 == 3:
+		if seleccion2 == 3:
 
-				menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
-def notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	"""
 	Copia de la función notas para uso específico de la función modifiar, se creo independiente debido a los problemas asociados a usar la misma función para ambos casos pues la originial volvía a menu_de_seleccion().
 	:param int contador: variable encargada de indicar en el f-string el nombre del estudiante al cual las notas consecuntes perteneces
@@ -318,7 +289,7 @@ def notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	:param function wait(): espera interacción del usuario para continuar antes de volver a función invocadora modificar()
 	:param function encabezado(): sólo imprime el encabezado de la tabla en pantalla con los criterios dados al inicio del programa
 	"""
-	encabezado(parte1, parte2)
+	encabezado(parte1, parte2, diccionario)
 	
 	contador = 0
 
@@ -333,11 +304,10 @@ def notas_copia(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	print("Presione Cualquier Tecla para Continuar: ")
 	wait()
 	wait()
-	modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+	modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 				
 
-def modulo_cambio(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
-
+def modulo_cambio(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	"""
 	Funcion para cambiar o agregar datos a la matriz principal.
 	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
@@ -353,133 +323,126 @@ def modulo_cambio(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	:param function wait(): espera hasta la interaccíón del usuario para continuar.
 	:param list matriz_cal[]: lista principal contenedora de los datos del estudiante.
 	"""
-	
-	seleccion = input("Seleccione una opción; agregar nuevos datos, S, para modificar datos, M: ").upper()
+	seleccion = input("Ingrese una opción; S para agregar nuevos datos, M para modificar datos: ").upper()
 
 	while seleccion != "S" and seleccion != "M":
-			seleccion = input("Seleccione una opción; agregar nuevos datos, S, para modificar datos, M: ").upper()
+			seleccion = input("Ingrese una opción; agregar nuevos datos, S, para modificar datos, M: ").upper()
 
 	if seleccion == "S":
-
-		numero_estudiantes1 = input("Por Favor Indique Cuántos Estudiantes se Van a Agregar: ")
-		while len(numero_estudiantes1) == 0:
-			numero_estudiantes1 = input("Por Favor Indique Cuántos Estudiantes se Van a Agregar: ")
-		while 48 > ord(numero_estudiantes1[0]) > 57:
-			numero_estudiantes1 = input("Por Favor Indique Cuántos Estudiantes se Van a Agregar: ")
-			while len(numero_estudiantes1) == 0:
-				numero_estudiantes1 = input("Por Favor Indique Cuántos Estudiantes se Van a Agregar: ")
+		while True:
+			numero_estudiantes1 = input("Por Favor Indique Cuántos Estudiantes a Agregar: ")
+			try:
+				numero_estudiantes1 = int(numero_estudiantes1)
+				break
+			except ValueError:
+				print()
+				print("Por Favor Ingrese un Número Válido")
+				print()
 
 		numero_estudiantes1 = int(numero_estudiantes1)
 
-		numero_notas1 = input("Por Favor Indique Cuántas Notas por Estudiante Nuevo se van a Agregar: ")
-		while len(numero_notas1) == 0:
+		while True:
 			numero_notas1 = input("Por Favor Indique Cuántas Notas por Estudiante Nuevo se van a Agregar: ")
-		while 48 > ord(numero_notas1[0]) > 57:
-			numero_notas1 = input("Por Favor Indique Cuántas Notas por Estudiante Nuevo se van a Agregar: ")
-			while len(numero_notas1) == 0:
-				numero_notas1 = input("Por Favor Indique Cuántas Notas por Estudiante Nuevo se van a Agregar: ")
+			try:
+				numero_notas1 = int(numero_notas1)
+				break
+			except ValueError:
+				print()
+				print("Por Favor Ingrese un Número Válido")
+				print
 
 		numero_notas1 = int(numero_notas1)
 
-		for a in range(numero_estudiantes, numero_estudiantes1+1):
+		for a in range(numero_estudiantes1):
 			matriz_cal.append([])
 			for b in range(numero_notas1+1):
 				if b == 0:
-					nombre = input("{} {}: ".format(parte1, a+1))
-					while len(nombre) == 0:
-						nombre = input("Ingrese un(a) {} {} Válido: ".format(parte1, a+1))
-					while 48 <= ord(nombre[0]) and 57 >= ord(nombre[0]):
-						nombre = input("Ingrese un(a) {} {} Válido: ".format(parte1, a+1))
-						while len(nombre) == 0:
-							nombre = input("Ingrese un(a) {} {} Válido: ".format(parte1, a+1))
-					matriz_cal[a].append(nombre)
+					nombre = input("{} {}: ".format(parte1, numero_estudiantes+a+1))
+					while nombre.istitle() == False:
+						nombre = input("Ingrese un(a) {} {} Válido: ".format(parte1, numero_estudiantes+a+1))
+					matriz_cal[a+numero_estudiantes].append(nombre)
 				else:
-					nota = input("{}, {} {}: ".format(nombre, parte2, b))
-					while len(nota) == 0:
-						nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, parte2, b))
-						if len(nota) == 0:
-							continue
-						else:
-							while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-								nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, parte2, b))
-								if len(nota) == 0:
-									break
-					while 48 > ord(nota[0]) or 57 < ord(nota[0]):
-						nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, parte2, b))
-						while len(nota) == 0:
-							nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, parte2, b))
-					
+					while True:
+						nota = input("{}, {} {}: ".format(nombre, parte2, b))
+						try:
+							nota = float(nota)
+							break
+						except ValueError:
+							print()
+							print("Ingrese un Valor Válido para {}, {} {}: ".format(nombre, parte2, b))
 					nota = round(float(nota), 2)
-					
-					matriz_cal[a].append(nota)
+					matriz_cal[a+numero_estudiantes].append(nota)
 
-					print("Presione Cualquier Tecla Para Continuar...")
-					wait()
+		print("Presione Cualquier Tecla Para Continuar...")
+		wait()
 
-		modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+		modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 	elif seleccion == "M":
+		seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado: ")
+		while seleccion.isnumeric() == False:
+			seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado Válido: ")
 
-		seleccion = input("Por Favor Seleccione el Código de Estudiante a ser Modificado: ")
-
-		while len(seleccion) == 0:
-			seleccion = input("Por Favor Seleccione el Código de Estudiante a ser Modificado: ")
-			while ord(seleccion[0]) > 57 and ord(seleccion[0]) < 48:
-				seleccion = input("Por Favor Seleccione el Código de Estudiante a ser Modificado: ")
-				if len(seleccion) == 0:
-					break
-
-		while int(seleccion) > len(matriz_cal) and seleccion != "0":
-			seleccion = input("Seleccione Número de Estudiante Existente: ")
-			while len(seleccion) == 0:
-				seleccion = input("Seleccione Número de Estudiante Existente: ")
-			while ord(seleccion[0]) < 48 and ord(seleccion[0]) > 57:
-				seleccion = input("Seleccione Número de Estudiante Existente: ")
-				while len(seleccion) == 0:
-					seleccion = input("Seleccione Número de Estudiante Existente: ")
+		while int(seleccion) > len(matriz_cal) or int(seleccion) == 0:
+			seleccion = input("Por Favor Ingrese un Código Existente de Estudiante: ")
+			while seleccion.isalnum() == False:
+				seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado Válido: ")
 
 		seleccion = int(seleccion)-1
-	
 
+		print(f"El Valor {seleccion+1} pertenece al estudiante {matriz_cal[seleccion][0]}, ¿está seguro que desea continuar?")
+
+		yes = input("S/N: ").upper()
+		while yes != "S" and yes != "N":
+			yes = input('S/N: ').upper()
+
+		while yes == "N":
+			seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado: ")
+			while seleccion.isalnum() == False:
+				seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado Válido: ")
+
+			while int(seleccion) > len(matriz_cal) or int(selccion) == 0:
+				seleccion = input("Por Favor Ingrese un Código Existente de Estudiante: ")
+				while seleccion.isalnum() == False:
+					seleccion = input("Por Favor Ingrese el Código de Estudiante a ser Modificado Válido: ")
+
+			seleccion = int(seleccion)-1
+
+			print(f"El Valor {seleccion+1} pertenece al estudiante {matriz_cal[seleccion][0]}, ¿está seguro que desea continuar?")
+
+			yes = input("S/N: ").upper()
+			while yes != "S" and yes != "N":
+				yes = input('S/N: ').upper()
+		
 		seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Modificar, E, para hacerlo por código de nota o N para cambiar el nombre: ").upper()
 				
-		while len(seleccion2) == 0:
+		while seleccion2.isnumeric() == False and seleccion2 != "E" and seleccion2 != "N" :
 			seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Modificar, E, para hacerlo por código de nota o N para cambiar el nombre: ").upper()
-		while 48 > ord(seleccion2[0]) and 57 < ord(seleccion2[0]) and seleccion2 != "E":
-				seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Modificar, E, para hacerlo por código de nota o N para cambiar el nombre: ").upper()
-				while len(nota) == 0:
-					seleccion2 = input("Por Favor Ingrese Cantidad de Notas a Modificar, E, para hacerlo por código de nota o N para cambiar el nombre: ").upper()
 					 
-		if seleccion2 == "E":
-
+		if seleccion2 == "E":			
 			seleccion2 = input("Ingrese el Código de Nota a ser Modificado: ")
+			 
+			while seleccion2.isnumeric() == False:
+				seleccion2 = input("Ingrese un Código de Nota Válido: ")
 
-			while len(seleccion2) == 0:
-				seleccion2 = input("Ingrese el Código de Nota a ser Modificado: ")
-				while ord(seleccion2[0]) > 48 and ord(seleccion2[0]) > 57:
-					seleccion2 = input("Ingrese el Código de Nota a ser Modificado: ")
-			while ord(seleccion2[0]) > 48 and ord(seleccion2[0]) > 57:
-				seleccion2 = input("Ingrese el Código de Nota a ser Modificado: ")
-				if len(seleccion2) == 0:
-					seleccion2 = input("Ingrese el Código de Nota a ser Modificado: ")
+			while int(seleccion2) > len(matriz_cal[seleccion]):
+				seleccion2 = input("Ingrese un Código de Nota Válido: ")
+				while seleccion2.isnumeric() == False:
+					seleccion2 = input("Ingrese un Código de Nota Válido: ")
+				
 
 			seleccion2 = int(seleccion2)
 
 			
-			nota = input("{}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+seleccion2-1))
-			while len(nota) == 0:
-				nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b-1))
-				if len(nota) == 0:
-					continue
-				else:
-					while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-						nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b-1))
-						if len(nota) == 0:
-							break
-			while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-				nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b-1))
-				while len(nota) == 0:
-					nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b-1))
+			while True:
+				nota = input("{}, {} {}: ".format(matriz_cal[seleccion][0], parte2, seleccion2-1))
+				try:
+					nota = float(nota)
+					break
+				except ValueError:
+					print()
+					print("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, seleccion2-1))
+					print()
 							
 			nota = round(float(nota), 2)
 					
@@ -487,6 +450,7 @@ def modulo_cambio(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 			print()
 			print("Presione Cualquier Tecla Para Continuar...")
 			wait()
+			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
 		elif seleccion2 == "N":
@@ -499,43 +463,48 @@ def modulo_cambio(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 			print("Presione Cualquier Tecla Para Continuar...")
 			wait()
 
-			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
 
 		else: 
 			seleccion2 = int(seleccion2)
+			while len(matriz_cal[seleccion])-1 < seleccion2:
+				print("Valor Ingresado Fuera de Rango")
+				while True:
+					seleccion2 = input("Ingrese un Número Válido: ")
+					try:
+						seleccion2 = int(seleccion2)
+						break
+					except ValueError:
+						print()
+						print("Ingrese un Valor Válido")
+						print()
 
-			for b in range(seleccion2-1, seleccion2):
-				nota = input("{}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b-1))
-				while len(nota) == 0:
-					nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b))
-					if len(nota) == 0:
-						continue
-					else:
-						while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-							nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b))
-							if len(nota) == 0:
-								break
-				while 48 > ord(nota[0]) and 57 < ord(nota[0]):
-					nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b))
-					while len(nota) == 0:
-						nota = input("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, len(matriz_cal)+b))
-							
-			nota = round(float(nota), 2)
-					
-			matriz_cal[seleccion][seleccion2] = nota
+			for b in range(seleccion2):
+				while True:
+					nota = input("{}, {} {}: ".format(matriz_cal[seleccion][0], parte2, b+1))
+					try:
+						nota = float(nota)
+						break
+					except ValueError:
+						print()
+						print("Ingrese un Valor Válido para {}, {} {}: ".format(matriz_cal[seleccion][0], parte2, b+1))
+						print()
+				nota = round(float(nota), 2)
+				matriz_cal[seleccion][b+1] = nota
+
 			print()
 			print("Presione Cualquier Tecla Para Continuar...")
 			wait()
 
-		modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
-def final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 
 	"""
-	Se encarga de mostrar la nota deifinitiva para el periodod de timepo especificado acorde a la totalidad de notas. Cada nota tiene el mismo peso, no se puede realizar sobre procentajes.
+	Se encarga de mostrar la nota deifinitiva para el periodo de tiempo especificado acorde a la totalidad de notas. Cada nota tiene el mismo peso, no se puede realizar sobre procentajes.
 	:param string parte3: cambio del valor de la tabla del encabezado para desglosar el texto especidicado.
 	:param function encabezado(): función que imprime el encabezado de la tabla.
 	:param int contador: iterador para el f-string 
@@ -548,7 +517,7 @@ def final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 
 	parte3 = "Notas Finales (ponderado)"
 
-	encabezado(parte1, parte3)
+	encabezado(parte1, parte3, diccionario)
 
 	contador = 0
 	contador1 = 0
@@ -572,10 +541,10 @@ def final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	print("Presione Cualquier Tecla para Continuar: ")
 	wait()
 	wait()
-	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
-def menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	"""
 	Menú de selección principal para las opcionesd el reporte. 
 	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
@@ -601,13 +570,15 @@ def menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_not
 	print()
 	print("                4. Modificar Datos")
 	print()
-	print("                5. Salir")
+	print("                5. Guardar el Archivo")
+	print()
+	print("                6. Salir")
 	print()
 
-	seleccion = input("Seleccione una Opción: ")
+	seleccion = input("Ingrese una Opción: ")
 
-	while seleccion != '0' and seleccion!= '1' and seleccion != '2' and seleccion != "3" and seleccion != "4" and seleccion != "5":
-		seleccion = input("Seleccione una Opción: ")
+	while seleccion != '0' and seleccion!= '1' and seleccion != '2' and seleccion != "3" and seleccion != "4" and seleccion != "5" and seleccion != "6":
+		seleccion = input("Ingrese una Opción: ")
 	
 		
 	print(str(seleccion) + ", ¿es esta opción correcta?")
@@ -621,22 +592,35 @@ def menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_not
 	if yes == "S":
 			
 		if seleccion == "2":
-			notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 		elif seleccion == "0":
-			final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 		elif seleccion == "1":
-			tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 		elif seleccion == "3":
-			diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 		elif seleccion == "4":
-			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+			modificar(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+		elif seleccion == "6":
+			main1(diccionario)
 		else:
-			exit()
+			nombre1 = input("Ingrese Nombre del Archivo (con extensión): ")
+			h = open(nombre1, "w")
+			h.write(str(matriz_cal))
+			h.write("\n"+str(parte1))
+			h.write("\n"+str(parte2))
+			h.write("\n"+str(numero_notas))
+			h.write("\n"+str(numero_estudiantes))
+			h.close()
+			menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+
+
 	
 	elif yes == "N":
-		menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+		menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
-def tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+
+def tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 	"""
 	Imprime un gráfico del comportamiento del nivel académico del alumno, es uno individual.
 	:param str e int seleccion: indicador del código de estudiante a ser revisado para la generación de la tabla.
@@ -648,15 +632,66 @@ def tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	:param function menu_de_seleccion(): vuelta al menu principal.
 	"""
 
-	seleccion = input("Por Favor Ingrese Código Estudiante a Revisar: ")
 	
-	while len(seleccion) == 0:
-		seleccion = input("Por Favor Ingrese Código Estudiante a Revisar: ")
+	while True:
+		seleccion = input("Por Favor Ingrese Código {} a Revisar: ".format(parte1))
+		try:
+			seleccion = int(seleccion)
+			break
+		except ValueError:
+			print()
+			print("Ingrese un número de {} válido.".format(parte1))
+			print()
+	
+	while int(seleccion) > len(matriz_cal):
+		print("Ingrese un número de {} existente.".format(parte1))
+		while True:
+			seleccion = input("Por Favor Ingrese Código {} a Revisar: ".format(parte1))
+			try:
+				seleccion = int(seleccion)
+				break
+			except ValueError:
+				print()
+				print("Ingrese un número de {} válido: ".format(parte1))
+				print()
 
-	while ord(seleccion[0]) < 48 or ord(seleccion[0]) > 57 or int(seleccion) > len(matriz_cal):
-		seleccion = input("Por Favor Ingrese Código Estudiante a Revisar: ")
-		while len(seleccion) == 0:
-			seleccion = input("Por Favor Ingrese Código Estudiante a Revisar: ")
+	print("El código {}, pertenece al estudiante {}, ¿es esto correcto?".format(seleccion, matriz_cal[int(seleccion)-1][0]))
+
+	yes = input("S/N: ").upper()
+
+	while yes != "S" and yes != "N":
+		yes = input("S/N: ").upper()
+
+	while yes == "N":
+		while True:
+			seleccion = input("Por Favor Ingrese Código {} a Revisar: ".format(parte1))
+			try:
+				seleccion = int(seleccion)
+				break
+			except ValueError:
+				print()
+				print("Ingrese un número de {} válido.".format(parte1))
+				print()
+	
+		while int(seleccion) > len(matriz_cal) or int(seleccion) == 0:
+			print("Ingrese un número de {} existente.".format(parte1))
+			while True:
+				seleccion = input("Por Favor Ingrese Código {} a Revisar: ".format(parte1))
+				try:
+					seleccion = int(seleccion)
+					break
+				except ValueError:
+					print()
+					print("Ingrese un número de {} válido.".format(parte1))
+					print()
+
+		print("El código {}, pertenece al estudiante {}, ¿es esto correcto?".format(seleccion, matriz_cal[int(seleccion)-1][0]))
+
+		yes = input("S/N: ").upper()
+
+		while yes != "S" and yes != "N":
+			yes = input("S/N: ").upper()
+
 
 	seleccion = int(seleccion)-1
 
@@ -676,26 +711,33 @@ def tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	
 
 	fig, axs = plt.subplots(1, 1)
-	if len(matriz_cal[seleccion]) < 2:
+	if len(matriz_alv) < 3:
 		axs.plot(matriz_terciaria[1:], matriz_alv[1:], 'o', color = 'red', label= 'Rendimiento {}'.format(matriz_secundaria[0]))
+		fig.suptitle(f'Rendimiento {matriz_secundaria[0]}')
+		plt.ylabel("Nota Obtenida")
+		plt.xlabel("Número Nota")
+		plt.legend()
+		plt.grid()
+		plt.show()
 	else:
 		axs.plot(matriz_terciaria[1:], matriz_alv[1:], color = 'red', label= 'Rendimiento {}'.format(matriz_secundaria[0]))
-	plt.title(f'Rendimiento {matriz_secundaria[0]}')
-	plt.ylabel("Nota Obtenida")
-	plt.xlabel("Número Nota")
-	plt.legend()
-	plt.show()
-	plt.grid()
+		fig.suptitle(f'Rendimiento {matriz_secundaria[0]}')
+		plt.ylabel("Nota Obtenida")
+		plt.xlabel("Número Nota")
+		plt.legend()
+		plt.grid()
+		plt.show()
+		
 
 
 
 	input("Presione Cualquier Tecla para Continuar...")
 
 	wait()
-	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
 
-def diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
+def diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario):
 
 	"""
 	Generador del diagrama con los resultados de las notas ponderadas a nivel general; todos los estudiantes.
@@ -744,9 +786,9 @@ def diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas):
 	input("Presione Cualquier Tecla para Continuar...")
 
 	wait()
-	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas)
+	menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
 
-def encabezado(Parte1, Parte2):
+def encabezado(Parte1, Parte2, diccionario):
 	"""
 	Función encarga de imprimir el cabezado de la tabla para las funciones notas() y notas_copia().
 	:param string Parte1: indicador del criterio 1 para la tabla de notas; originalmente definido como Notas. La sangría dada por el f-string es la misma que en las funciones mencionadas.
@@ -766,7 +808,7 @@ def wait():
 	m.getch()
 
 
-def main1():
+def main1(diccionario):
 	"""
 	Primera interfaz del programa para la creación del nuevo repote. 
 	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
@@ -777,7 +819,6 @@ def main1():
 	:param string Parte2: criterio 2 de la tabla, definido por defecto como Nombre. Sino se encuentra un carácter válido el programa volverá a preguntar.
 	:param function calificactiones(): funcion para la creación de la matriz de las notas.
 	:param function main1(): reinicio de la función main.
-
 	"""
 	print("                  REPORTE DE NOTAS")
 	print()
@@ -787,6 +828,311 @@ def main1():
 	print()
 	print("                 1. Nuevo Reporte")
 	print()
+	print("                 2. Cargar Archivo de Reporte")
+	print()
+	print("                 3. Volver al Menu anterior")
+	print()
+	
+	print("Seleccione una opción para continuar: ", end = "")
+	seleccion = input()
+	
+
+	while seleccion != "1" and seleccion != "2" and seleccion != "3":
+		print("Seleccione una opción válida: ", end="")
+		seleccion = input()
+
+	print(str(seleccion) + ", ¿es esta opción correcta?")
+	yes = input("(S/N): ").upper()
+
+	while yes != "S" and yes != "N":
+		yes = input("(S/N): ").upper()
+	
+	if yes == "S":
+
+		if seleccion == "3":
+			usuarios(diccionario)
+
+		elif seleccion == "1":
+			print("Para iniciar, por favor presione cualquier tecla...")
+			wait()
+			print()
+
+			
+			while True:
+				numero_estudiantes = input('Ingrese Cantidad de Estudiantes: ')
+				try:
+					numero_estudiantes = int(numero_estudiantes)
+					break
+				except ValueError:
+					print()
+					print("Cantidad Inválida de Estudiantes")
+					print()
+						
+			numero_estudiantes = int(numero_estudiantes)
+			print()
+			print("{}, ¿es esto correcto?".format(numero_estudiantes))
+			yes = input("(S/N): ").upper()
+			while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+			while yes == "N":
+				while True:
+					numero_estudiantes = input('Ingrese Cantidad de Estudiantes: ')
+					try:
+						numero_estudiantes = int(numero_estudiantes)
+						break
+					except ValueError:
+						print()
+						print("Cantidad Inválida de Estudiantes")
+						print()
+						
+
+				numero_estudiantes = int(numero_estudiantes)
+				print("{}, ¿es esto correcto?".format(numero_estudiantes))
+				yes = input("(S/N): ").upper()
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+				if yes == "S":
+					continue
+			
+			
+			while True:
+				numero_notas = input('Ingrese Total de Notas: ')
+				try:
+					numero_notas = int(numero_notas)
+					break
+				except ValueError:
+					print()
+					print('Total Inválido de Notas')
+					print()
+
+			numero_notas = int(numero_notas)
+			print()
+			print("{}, ¿es esto correcto?".format(numero_notas))
+			yes = input("(S/N): ").upper()
+			
+			while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+			
+			while yes == "N":
+				while True:
+					numero_notas = input('Ingrese Total de Notas: ')
+					try:
+						numero_notas = int(numero_notas)
+						break
+					except ValueError:
+						print()
+						print('Total Inválido de Notas')
+						print()
+						
+				numero_notas = int(numero_notas)
+				print("{}, ¿es esto correcto?".format(numero_notas))
+				yes = input("(S/N): ").upper()
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+				if yes == "S":
+					continue
+			
+			Parte1= input("Por Favor Ingrese Criterio de tabla 1 (Columna de Notas): ")
+
+			while Parte1.istitle() == False:
+				Parte1 = input('Por Favor Ingrese Criterio tabla 1 Válido (Formato de Título: Notas, etc...): ')
+				
+
+			print("{}, ¿es esto correcto?".format(Parte1))
+			yes = input("(S/N): ").upper()
+			while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+			while yes == "N":
+				Parte1= input("Por Favor Ingrese Criterio de tabla 1 (Columna de Notas): ")
+				while Parte1.istitle() == False:
+					Parte1 = input('Por Favor Ingrese Criterio tabla 1 Válido (Formato de Título: Notas, etc...): ')
+
+				print("{}, ¿es esto correcto?".format(Parte1))
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+				yes = input("(S/N): ").upper()
+				if yes == "S":
+					continue
+			print()
+			Parte2 = input("Por Favor Ingrese Criterio tabla 2 (Columna de Nombre del Estudiante): ")
+
+			while Parte2.istitle() == False:
+				Parte2 = input('Por Favor Ingrese Criterio tabla 2 Válida (Formato de Título: Nombre, etc...): ')
+
+			print("{}, ¿es esto correcto?".format(Parte2))
+			yes = input("(S/N): ").upper()
+			while yes != "N" and yes != "S":
+				yes = input("(S/N): ").upper()
+			while yes == "N":
+				Parte2 = input("Por Favor Ingrese Criterio tabla 2 (Columna de Nombre del Estudiante): ")
+
+				while Parte2.istitle() == False:
+					Parte2 = input('Por Favor Ingrese Criterio tabla 2 Válida (Formato de Título: Nombre, etc...): ')
+
+				print("{}, ¿es esto correcto?".format(Parte2))
+				yes = input("(S/N): ").upper()
+				while yes != "N" and yes != "S":
+					yes = input("(S/N): ").upper()
+				if yes == "S":
+					continue
+			print()
+			calificaciones(numero_estudiantes, numero_notas, Parte1, Parte2, diccionario)
+		else:
+			arch = input("Por Favor Indique el nombre del Archivo (con la extensión): ")
+			try:
+				h = open(arch, "r")
+			except:
+				print("Nombre archivo inexistente, presione cualquier tecla para continuar...")
+				wait()
+				main1(diccionario)			
+			hola = str(h.readline())
+			hola = hola[:-1]
+			encabezado1 = str(h.readline())
+			encabezado1 = encabezado1[:-1]
+			encabezado2 = str(h.readline())
+			encabezado2 = encabezado2[:-1]
+			numero_notas = int(h.readline())
+			numero_estudiantes = int(h.readline())
+			h.close()
+			matriz_cal = lector(hola, numero_estudiantes, numero_notas, diccionario)
+			print("Proceso completado, presione cualquier tecla para continuar...")
+			wait()
+			menu_de_seleccion(matriz_cal, encabezado1, encabezado2, numero_estudiantes, numero_notas, diccionario)
+	elif yes == "N":
+		main1(diccionario)
+
+
+def lector(hola, numero_estudiantes, numero_notas, diccionario):
+	"""
+	Este es el módulo encargado de leer los archivos para el generador de reportes, 
+	en este caso sólo se encarga de leer la matriz principal usada en el programa definida como "matriz_cal", que al guardarse se vuelve un tipo string
+	"""
+	hola = [hola[1:-1]]
+	matriz = []
+	matriz_cal = []
+	nombre = ""
+	contador = 0
+	contador2 = 0
+	st = True
+	for elemento in hola:
+		for numero in range(len(elemento)):
+			if elemento[numero] == "]":
+				matriz.append(float(nombre))
+				nombre = ""
+				matriz_cal.append(matriz[:])
+				matriz = []
+				st = True
+			elif elemento[numero]  == "'":
+				contador += 1
+				if contador == 2:
+					st = False
+					contador = 0
+					matriz.append(nombre)
+					nombre = ""
+			elif (elemento[numero].isalpha() == True or (elemento[numero] == " " and elemento[numero+1] != "[")) and st:
+				nombre += elemento[numero]
+			elif elemento[numero] == "," and elemento[numero-1] != "]":
+				contador2+=1
+				if contador2 == 2:
+					contador2 = 0
+					matriz.append(float(nombre))
+					nombre = ""
+					st = True
+			elif elemento[numero].isnumeric() == True or elemento[numero] == ".":
+				nombre += elemento[numero]
+	
+	return matriz_cal
+
+def usuarios(diccionario):
+	"""
+	Este es el módulo de inicio de sesión previo a la interfaz del programa
+	Cada uno de los parámetros en el pertenecen a una variable que posteriormente se guardará en un diccionariio, dependiendo del mismo es el acceso 
+	que se le da al usuario.
+
+	"""
+	print()
+	print("                MENU PRINCIPAL")
+	print()
+	print("           1. Ingresar")
+	print()
+	print("           2. Registrarse")
+	print()
+	seleccion = input("Ingrese una opción: ")
+	while seleccion != "1" and seleccion != "2":
+		seleccion = input("Ingrese una opción válida: ")
+
+	if seleccion == "2":
+		hola = input("Indique el tipo de usuario (usuario o administrador): ").upper()
+		while hola != 'USUARIO' and hola != 'ADMINISTRADOR':
+			hola = input("Indique el tipo de usuario (usuario o administrador): ").upper()
+
+		if hola == "USUARIO":
+			cantidad = 1
+			diccionario = {}
+			for numero in range(cantidad):
+				nombre_usuario = input("Ingrese un nuevo nombre de usuario {}: ".format(numero+1))
+				diccionario[nombre_usuario] = input("Ingrese valor contraseña para {}: ".format(nombre_usuario))
+		if hola == "ADMINISTRADOR":
+			cantidad = input("Ingrese el número de usuarios a agregar: ")
+			while cantidad.isnumeric() == False:
+				cantidad = input("Ingrese un valor de usuarios válido: ")
+			cantidad = int(cantidad)
+			diccionario = {}
+			for numero in range(cantidad):
+				nombre_usuario = input("Ingrese un nuevo nombre de usuario {}: ".format(numero+1))
+				diccionario[nombre_usuario] = input("Ingrese valor contraseña para {}: ".format(nombre_usuario))
+		usuarios(diccionario)
+
+	if seleccion == "1":
+		if len(diccionario)<1:
+			print("Actualmente sin usuarios, volviendo al menú principal...")
+			usuarios(diccionario)
+		print("Bienvenido a la interfaz de incio de sesión")
+		hola = input("Indique el tipo de usuario (usuario o administrador): ").upper()
+		while hola != 'USUARIO' and hola != 'ADMINISTRADOR':
+			hola = input("Indique el tipo de usuario (usuario o administrador): ").upper()
+		nombre = (input("Por favor Ingrese su nombre de usuario: "))
+		while nombre not in diccionario:
+			nombre = (input("El usuario no existe, ingrese un usuario existente: "))
+		contra = (input("Ingrese la contraseña: "))
+		limites = 3
+		while diccionario[nombre] != contra:
+			limites -= 1
+			print("Contraseña incorrecta, intentos restantes{}".format(limites))
+			contra = (input("Ingrese la contraseña: "))
+			if limites == 0:
+				print("El usuario {}, ha sido bloqueado.".format(nombre))
+				break
+		if limites == 0:
+			print("Reinicie para volver a acceder al usuario")
+		else:
+			print("Bienvenido {}".format(nombre))
+			if hola == "ADMINISTRADOR":
+				main1(diccionario)
+			elif hola == "USUARIO":\
+				restricted(diccionario)
+
+
+def restricted(diccionario):
+	"""
+	Primera interfaz del programa para la creación del nuevo repote. 
+	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
+	:param string e int selecccion: opción de selección de menú, si al convertir la variabla a entero, esta no existe en el menú, el programa volverá a preguntar.
+	:param string e int numero_estudiantes: numero total de estudiantes tenidos en cuenta para la ejecución del código y creación de los datos; si al converir no se encuentra un entero válido el programa volverá a preguntar. 
+	:param string e int numero_noreas: numero totoal de notas a tener en cuenta por estudiante.
+	:param string Parte1: criterio 1 de la tabla, definido por defecto como Notas. Sino se encuentra un carácter válido el programa volverá a preguntar.
+	:param string Parte2: criterio 2 de la tabla, definido por defecto como Nombre. Sino se encuentra un carácter válido el programa volverá a preguntar.
+	:param function calificactiones(): funcion para la creación de la matriz de las notas.
+	:param function main1(): reinicio de la función main.
+	"""
+	print("                  REPORTE DE NOTAS")
+	print()
+	print("                 ===================")
+	print()
+	print("                 Bienvenido al reporte de notas.")
+	print()
+	print("                 1. Cargar Archivo de Reporte")
+	print()
 	print("                 2. Volver al Menu anterior")
 	print()
 	
@@ -794,7 +1140,7 @@ def main1():
 	seleccion = input()
 	
 
-	while seleccion != "1" and seleccion != "2":
+	while seleccion != "1" and seleccion != "2" and seleccion != "3":
 		print("Seleccione una opción válida: ", end="")
 		seleccion = input()
 
@@ -807,135 +1153,85 @@ def main1():
 	if yes == "S":
 
 		if seleccion == "2":
-			exit()
+			usuarios(diccionario)
 
 		else:
-			print("Para iniciar, por favor presione cualquier tecla...")
+			arch = input("Por Favor Indique el nombre del Archivo (con la extensión): ")
+			try:
+				h = open(arch, "r")
+			except:
+				print("Nombre archivo inexistente, presione cualquier tecla para continuar...")
+				wait()
+				main1(diccionario)			
+			hola = str(h.readline())
+			hola = hola[:-1]
+			encabezado1 = str(h.readline())
+			encabezado1 = encabezado1[:-1]
+			encabezado2 = str(h.readline())
+			encabezado2 = encabezado2[:-1]
+			numero_notas = int(h.readline())
+			numero_estudiantes = int(h.readline())
+			h.close()
+			matriz_cal = lector(hola, numero_estudiantes, numero_notas)
+			print("Proceso completado, presione cualquier tecla para continuar...")
 			wait()
-			print()
+			menu_de_seleccion_res(matriz_cal, encabezado1, encabezado2, numero_estudiantes, numero_notas, diccionario)
+	elif yes == "N":
+		main1(diccionario)
 
-			numero_estudiantes = input('Ingrese Cantidad de Estudiantes: ')
-			while len(numero_estudiantes) == 0:
-				numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-			
-			while (48 > ord(numero_estudiantes[0]) or 57 < ord(numero_estudiantes[0])): 
-				while len(numero_estudiantes) > 1:
-					break
-				numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-				while len(numero_estudiantes) == 0:
-					numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-						
-			numero_estudiantes = int(numero_estudiantes)
-			print()
-			print("{}, ¿es esto correcto?".format(numero_estudiantes))
-			yes = input("(S/N): ").upper()
-			while yes != "N" and yes != "S":
-					yes = input("(S/N): ").upper()
-			while yes == "N":
-				numero_estudiantes = input('Ingrese Cantidad de Estudiantes: ')
-				while len(numero_estudiantes) == 0:
-					numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-					
-				while (48 > ord(numero_estudiantes[0]) or 57 < ord(numero_estudiantes[0])):
-					while len(numero_estudiantes) > 1 and (48 > ord(numero_estudiantes[0]) or 57 < ord(numero_estudiantes[0])):
-						break
-					numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-					while len(numero_estudiantes) == 0:
-						numero_estudiantes = input('Ingrese Cantidad Válida de Estudiantes: ')
-						
-
-				numero_estudiantes = int(numero_estudiantes)
-				print("{}, ¿es esto correcto?".format(numero_estudiantes))
-				yes = input("(S/N): ").upper()
-				if yes == "S":
-					continue
-			
-				
-			numero_notas = input('Ingrese Total de Notas: ')
-			
-			
-			while len(numero_notas) == 0:
-				numero_notas = input('Ingrese Total Válido de Notas: ')
-
-			while (48 > ord(numero_notas[0]) or 57 < ord(numero_notas[0])):
-				while len(numero_notas) > 1 and (48 > ord(numero_notas[1]) or 57 < ord(numero_notas[1])):
-					break
-				numero_notas = input('Ingrese Total Válido de Notas: ')
-				while len(numero_notas) == 0:
-					numero_notas = input('Ingrese Total Válido de Notas: ')
-
-			numero_notas = int(numero_notas)
-			print()
-			print("{}, ¿es esto correcto?".format(numero_notas))
-			yes = input("(S/N): ").upper()
-			while yes != "N" and yes != "S":
-					yes = input("(S/N): ").upper()
-			while yes == "N":
-				numero_notas = input('Ingrese Total de Notas: ')
-				while len(numero_notas) == 0:
-					numero_notas = input('Ingrese Total Válido de Notas: ')
-
-				while (48 > ord(numero_notas[0]) or 57 < ord(numero_notas[0])) or len(numero_notas) > 1 and (48 > ord(numero_notas[1]) or 57 < ord(numero_notas[1])):
-					numero_notas = input('Ingrese Total Válido de Notas: ')
-					while len(numero_notas) == 0:
-						numero_notas = input('Ingrese Total Válido de Notas: ')
-						
-				numero_notas = int(numero_notas)
-				print("{}, ¿es esto correcto?".format(numero_notas))
-				yes = input("(S/N): ").upper()
-				if yes == "S":
-					continue
-			Parte1= input("Por Favor Ingrese Criterio de tabla 1 (Notas): ")
-
-			while len(Parte1) == 0 or (48 <= ord(Parte1[0]) and ord(Parte1[0]) <= 57):
-				Parte1 = input('Por Favor Ingrese Criterio tabla 1 Válido (Notas): ')
-
-			print("{}, ¿es esto correcto?".format(Parte1))
-			yes = input("(S/N): ").upper()
-			while yes != "N" and yes != "S":
-					yes = input("(S/N): ").upper()
-			while yes == "N":
-				Parte1= input("Por Favor Ingrese Criterio tabla 1 (Notas): ")
-
-				while len(Parte1) == 0 or (48 <= ord(Parte1[0]) and ord(Parte1[0]) <= 57):
-					Parte1 = input('Por Favor Ingrese Criterio tabla 1 Válido (Notas): ')
-
-				print("{}, ¿es esto correcto?".format(Parte1))
-				yes = input("(S/N): ").upper()
-				if yes == "S":
-					continue
-			print()
-			Parte2 = input("Por Favor Ingrese Criterio tabla 2 (Nombre, etc): ")
-
-			while len(Parte2) == 0 or (48 <= ord(Parte2[0]) and ord(Parte2[0]) <= 57):
-				Parte2 = input('Por Favor Ingrese Criterio tabla 2 Válida (Nombre, etc): ')
-
-			print("{}, ¿es esto correcto?".format(Parte2))
-			yes = input("(S/N): ").upper()
-			while yes != "N" and yes != "S":
-				yes = input("(S/N): ").upper()
-			while yes == "N":
-				Parte2= input("Por Favor Ingrese Criterio tabla 2 (Nombre, etc): ")
-
-				while len(Parte2) == 0 or (48 <= ord(Parte2[0]) and ord(Parte2[0]) <= 57):
-					Parte2 = input('Por Favor Ingrese Criterio tabla 2 Válida (Nombre, etc): ')
-
-				print("{}, ¿es esto correcto?".format(Parte2))
-				yes = input("(S/N): ").upper()
-				while yes != "N" and yes != "S":
-					yes = input("(S/N): ").upper()
-				if yes == "S":
-					continue
-			print()
-			calificaciones(numero_estudiantes, numero_notas, Parte1, Parte2)
-	if yes == "N":
-		main1()
-
-def exit():
+def menu_de_seleccion_res(matriz_cal, encabezado1, encabezado2, numero_estudiantes, numero_notas, diccionario):
 	"""
-	Función de salida del programa para terminar con la ejecución del código
+	Menú de selección principal para las opcionesd el reporte. 
+	Los ciclos while se crearon con el objetivo de evitar que el programa entrará en un bucle y abortara la operación. Debido a que los datos tratados deben ser de un valor específico si se hace de otra manera el programa abortará
+	:param string e int seleccion: indicador de una opción dentro del menú, si es inválida el programa volverá a preguntar.
+	:param string yes: variable de confirmación de selección opción menú; si el caracter es inválido el programa volverá a preguntar.
+	:param function notas(): función para la consulta de la información presente en la matriz principal matriz_cal[].
+	:param funcition final(): función para la generación de notas finales sobre los datos presentes en la matriz principal.
+	:param funcition tabla(): generador de la tabla de rendimiento individual del estudiante.
+	:param function diagrama(): generación de un diagrama de barras general con las notas definitivas por estudiante.
+	:param function modificar(): acceso a datos para su modificación. 
 	"""
-	print("Presione Cualquier Tecla para Continuar")
-	wait()
+	print("                                OPCIONES DE REPORTE")
+	print()
+	print("                                ===================")
+	print()
+	print("                0. Generar Resultado Final por Estudiante")
+	print()
+	print("                1. Generar Tabla Rendimiento por Estudiante")
+	print()
+	print("                2. Consultar Notas por Estudiante")
+	print()
+	print("                3. Generar Diagrama con Rendimiento Ponderado General")
+	print()
+	print("                4. Salir")
+	print()
 
-main1()
+	seleccion = input("Ingrese una Opción: ")
+
+	while seleccion != '0' and seleccion!= '1' and seleccion != '2' and seleccion != "3" and seleccion != "4":
+		seleccion = input("Ingrese una Opción: ")
+	
+		
+	print(str(seleccion) + ", ¿es esta opción correcta?")	
+	
+	yes = input("(S/N): ").upper()
+	
+	while yes != "S" and yes != "N":
+		yes = input("(S/N): ").upper()
+
+	if yes == "S":
+			
+		if seleccion == "2":
+			notas(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+		elif seleccion == "0":
+			final(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+		elif seleccion == "1":
+			tabla(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+		elif seleccion == "3":
+			diagrama(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+		else:
+			main1(diccionario)	
+	elif yes == "N":
+		menu_de_seleccion(matriz_cal, parte1, parte2, numero_estudiantes, numero_notas, diccionario)
+
+usuarios(diccionario)
